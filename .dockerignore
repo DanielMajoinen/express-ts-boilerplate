@@ -1,0 +1,6 @@
+README.*
+
+.git/
+node_modules/
+dist/
+.env

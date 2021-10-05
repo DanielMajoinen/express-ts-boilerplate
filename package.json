@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "debug": "nodemon -r dotenv/config --inspect=9229 ./src/server.ts | pino-pretty",
-    "start:prod": "rm -rf ./dist/* && cross-env NODE_ENV=production webpack && node -r dotenv/config ./dist/bundle.js",
-    "build": "cross-env NODE_ENV=production webpack",
+    "start:prod": "node -r dotenv/config ./dist/bundle.js",
+    "build": "rm -rf ./dist/* && cross-env NODE_ENV=production webpack",
     "test": "jest --coverage"
   },
   "repository": "git+https://github.com/DanielMajoinen/friendly-rotary-phone.git",
