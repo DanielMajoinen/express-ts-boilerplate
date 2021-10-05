@@ -1,14 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const dev = process.env.NODE_ENV !== 'production';
-
-const HTMLWebpackPluginConfig = new HTMLWebpackPlugin({
-  template: path.join(__dirname, '/src/index.html'),
-  filename: 'index.html',
-  inject: 'body',
-});
 
 const DefinePluginConfig = new webpack.DefinePlugin({
   'process.env.NODE_ENV': JSON.stringify('production'),
@@ -16,20 +10,12 @@ const DefinePluginConfig = new webpack.DefinePlugin({
 
 module.exports = {
   mode: dev ? 'development' : 'production',
-  entry: ['@babel/polyfill', path.join(__dirname, '/src/index')],
-  devServer: {
-    host: 'localhost',
-    port: '3000',
-    hot: true,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-    },
-    historyApiFallback: true,
-  },
+  entry: ['@babel/polyfill', path.join(__dirname, '/src/server')],
+  target: 'node',
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.(ts|tsx)?$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
       },
@@ -59,6 +45,19 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
   },
   plugins: dev
-    ? [HTMLWebpackPluginConfig, new webpack.HotModuleReplacementPlugin()]
-    : [HTMLWebpackPluginConfig, DefinePluginConfig],
+    ? [new webpack.HotModuleReplacementPlugin()]
+    : [DefinePluginConfig],
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          format: {
+            comments: false,
+          },
+        },
+        extractComments: false,
+      }),
+    ],
+  },
 };
